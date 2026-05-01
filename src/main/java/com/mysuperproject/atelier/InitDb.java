@@ -8,7 +8,15 @@ import java.sql.Statement;
 
 public class InitDb {
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:atelier.db";
+        String dbFile = "atelier.db";
+        String url = "jdbc:sqlite:" + dbFile;
+        try {
+            // Видаляємо стару базу даних, щоб ініціалізувати наново
+            Files.deleteIfExists(Paths.get(dbFile));
+        } catch (Exception e) {
+            System.err.println("Could not delete old database file: " + e.getMessage());
+        }
+
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             
@@ -18,7 +26,8 @@ public class InitDb {
             String ddl = new String(Files.readAllBytes(Paths.get("db/DDL.sql")));
             String[] ddlStatements = ddl.split(";");
             for (String sql : ddlStatements) {
-                if (!sql.trim().isEmpty()) {
+                String cleanSql = sql.replaceAll("--.*", "").replaceAll("(?s)/\\*.*?\\*/", "").trim();
+                if (!cleanSql.isEmpty()) {
                     stmt.execute(sql);
                 }
             }
@@ -28,7 +37,8 @@ public class InitDb {
             String dml = new String(Files.readAllBytes(Paths.get("db/DML.sql")));
             String[] dmlStatements = dml.split(";");
             for (String sql : dmlStatements) {
-                if (!sql.trim().isEmpty()) {
+                String cleanSql = sql.replaceAll("--.*", "").replaceAll("(?s)/\\*.*?\\*/", "").trim();
+                if (!cleanSql.isEmpty()) {
                     stmt.execute(sql);
                 }
             }
