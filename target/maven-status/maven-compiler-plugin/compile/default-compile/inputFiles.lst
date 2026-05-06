@@ -1,3 +1,6 @@
+C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\annotation\Column.java
+C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\annotation\Id.java
+C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\annotation\Table.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\entity\Client.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\entity\Employee.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\entity\Material.java
@@ -12,8 +15,11 @@ C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\poo
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\ClientRepository.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\Dao.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\EmployeeRepository.java
+C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\generic\GenericRepository.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\MaterialRepository.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\OrderMaterialRepository.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\OrderRepository.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\OrderServiceRepository.java
 C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\repository\ServiceRepository.java
+C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\uow\IdentityMap.java
+C:\Users\Slava\Desktop\Проєкт\src\main\java\com\mysuperproject\atelier\uow\UnitOfWork.java

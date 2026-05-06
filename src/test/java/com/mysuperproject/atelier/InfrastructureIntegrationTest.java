@@ -4,6 +4,7 @@ import com.mysuperproject.atelier.entity.*;
 import com.mysuperproject.atelier.pool.ConnectionPool;
 import com.mysuperproject.atelier.repository.*;
 import org.junit.jupiter.api.*;
+import com.mysuperproject.atelier.entity.Order;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -24,17 +25,16 @@ public class InfrastructureIntegrationTest {
 
     @BeforeAll
     public static void setupDatabase() throws Exception {
-        // Remove old test db if exists
-        File dbFile = new File(TEST_DB_FILE);
-        if (dbFile.exists()) {
-            dbFile.delete();
-        }
+        // Initialize test DB (H2 in memory)
 
         // Initialize test DB
         try (Connection conn = ConnectionPool.getInstance().getConnection();
              Statement stmt = conn.createStatement()) {
 
             String ddl = new String(Files.readAllBytes(Paths.get("db/DDL.sql")));
+            // Адаптація синтаксису SQLite для H2 (MySQL Mode)
+            ddl = ddl.replace("AUTOINCREMENT", "AUTO_INCREMENT");
+            
             for (String sql : ddl.split(";")) {
                 if (!sql.trim().isEmpty()) {
                     stmt.execute(sql);
@@ -56,7 +56,7 @@ public class InfrastructureIntegrationTest {
     }
 
     @Test
-    @Order(1)
+    @org.junit.jupiter.api.Order(1)
     public void testClientRepository() {
         ClientRepository repo = new ClientRepository();
         
@@ -91,7 +91,7 @@ public class InfrastructureIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @org.junit.jupiter.api.Order(2)
     public void testEmployeeRepository() {
         EmployeeRepository repo = new EmployeeRepository();
         
@@ -115,7 +115,7 @@ public class InfrastructureIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @org.junit.jupiter.api.Order(3)
     public void testMaterialRepository() {
         MaterialRepository repo = new MaterialRepository();
         
@@ -138,7 +138,7 @@ public class InfrastructureIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @org.junit.jupiter.api.Order(4)
     public void testServiceRepository() {
         ServiceRepository repo = new ServiceRepository();
         
@@ -161,7 +161,7 @@ public class InfrastructureIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @org.junit.jupiter.api.Order(5)
     public void testOrderRepository() {
         OrderRepository repo = new OrderRepository();
         
@@ -186,7 +186,7 @@ public class InfrastructureIntegrationTest {
     }
 
     @Test
-    @Order(6)
+    @org.junit.jupiter.api.Order(6)
     public void testOrderMaterialRepository() {
         OrderMaterialRepository repo = new OrderMaterialRepository();
         
@@ -201,17 +201,17 @@ public class InfrastructureIntegrationTest {
         OrderMaterial saved = repo.save(om);
         assertEquals(1, saved.getOrderId());
 
-        saved.setQuantity(new BigDecimal("10.0"));
+        saved.setQuantity(new BigDecimal("10.00"));
         repo.update(saved);
         
         String idStr = saved.getOrderId() + "_" + saved.getMaterialId();
-        assertEquals(new BigDecimal("10.0"), repo.findById(idStr).get().getQuantity());
+        assertEquals(new BigDecimal("10.00"), repo.findById(idStr).get().getQuantity());
 
         assertTrue(repo.delete(idStr));
     }
 
     @Test
-    @Order(7)
+    @org.junit.jupiter.api.Order(7)
     public void testOrderServiceRepository() {
         OrderServiceRepository repo = new OrderServiceRepository();
         
