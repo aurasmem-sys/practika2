@@ -24,4 +24,6 @@ public class Client {
     private String phoneNumber;
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
 }

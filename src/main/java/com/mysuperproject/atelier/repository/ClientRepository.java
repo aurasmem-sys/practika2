@@ -15,14 +15,16 @@ public class ClientRepository implements Dao<Integer, Client> {
 
     private static final String DELETE_SQL = "DELETE FROM clients WHERE id = ?";
     private static final String SAVE_SQL =
-            "INSERT INTO clients (first_name, last_name, phone_number, email) VALUES (?, ?, ?, ?)";
+            "INSERT INTO clients (first_name, last_name, phone_number, email, password) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE_SQL =
-            "UPDATE clients SET first_name = ?, last_name = ?, phone_number = ?, email = ? WHERE id"
+            "UPDATE clients SET first_name = ?, last_name = ?, phone_number = ?, email = ?, password = ? WHERE id"
                     + " = ?";
     private static final String FIND_BY_ID_SQL =
-            "SELECT id, first_name, last_name, phone_number, email FROM clients WHERE id = ?";
+            "SELECT id, first_name, last_name, phone_number, email, password FROM clients WHERE id = ?";
     private static final String FIND_ALL_SQL =
-            "SELECT id, first_name, last_name, phone_number, email FROM clients";
+            "SELECT id, first_name, last_name, phone_number, email, password FROM clients";
+    private static final String FIND_BY_EMAIL_SQL =
+            "SELECT id, first_name, last_name, phone_number, email, password FROM clients WHERE email = ?";
 
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
@@ -46,6 +48,7 @@ public class ClientRepository implements Dao<Integer, Client> {
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setString(3, entity.getPhoneNumber());
             preparedStatement.setString(4, entity.getEmail());
+            preparedStatement.setString(5, entity.getPassword());
 
             preparedStatement.executeUpdate();
 
@@ -67,7 +70,8 @@ public class ClientRepository implements Dao<Integer, Client> {
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setString(3, entity.getPhoneNumber());
             preparedStatement.setString(4, entity.getEmail());
-            preparedStatement.setInt(5, entity.getId());
+            preparedStatement.setString(5, entity.getPassword());
+            preparedStatement.setInt(6, entity.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -105,6 +109,20 @@ public class ClientRepository implements Dao<Integer, Client> {
         }
     }
 
+    public Optional<Client> findByEmail(String email) {
+        try (Connection connection = connectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_EMAIL_SQL)) {
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(buildClient(resultSet));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding client by email", e);
+        }
+    }
+
     private Client buildClient(ResultSet resultSet) throws SQLException {
         return Client.builder()
                 .id(resultSet.getInt("id"))
@@ -112,6 +130,7 @@ public class ClientRepository implements Dao<Integer, Client> {
                 .lastName(resultSet.getString("last_name"))
                 .phoneNumber(resultSet.getString("phone_number"))
                 .email(resultSet.getString("email"))
+                .password(resultSet.getString("password"))
                 .build();
     }
 }

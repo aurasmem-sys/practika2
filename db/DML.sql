@@ -1,12 +1,12 @@
 -- DML скрипт для наповнення бази даних "Ательє" (SQLite)
 
 -- Наповнення таблиці clients (Клієнти)
-INSERT INTO clients (first_name, last_name, phone_number, email) VALUES
-('Олександр', 'Іванов', '+380501234567', 'o.ivanov@email.com'),
-('Марія', 'Петренко', '+380671234567', 'm.petrenko@email.com'),
-('Олена', 'Сидоренко', '+380631234567', 'o.sydorenko@email.com'),
-('Ігор', 'Коваленко', '+380991234567', NULL),
-('Анна', 'Мельник', '+380971234567', 'a.melnyk@email.com');
+INSERT INTO clients (first_name, last_name, phone_number, email, password) VALUES
+('Олександр', 'Іванов', '+380501234567', 'o.ivanov@email.com', 'dummy_hash_1'),
+('Марія', 'Петренко', '+380671234567', 'm.petrenko@email.com', 'dummy_hash_2'),
+('Олена', 'Сидоренко', '+380631234567', 'o.sydorenko@email.com', 'dummy_hash_3'),
+('Ігор', 'Коваленко', '+380991234567', NULL, NULL),
+('Анна', 'Мельник', '+380971234567', 'a.melnyk@email.com', 'dummy_hash_4');
 
 -- Наповнення таблиці employees (Співробітники)
 INSERT INTO employees (first_name, last_name, position, phone_number) VALUES
