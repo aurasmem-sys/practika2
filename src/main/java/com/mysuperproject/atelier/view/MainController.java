@@ -295,24 +295,56 @@ public class MainController {
 
     @FXML
     public void onExportData() {
-        try {
-            java.io.File file = new java.io.File(System.getProperty("user.home") + "/Desktop/atelier_clients_export.csv");
-            try (java.io.PrintWriter writer = new java.io.PrintWriter(file, java.nio.charset.StandardCharsets.UTF_8)) {
-                writer.write('\ufeff'); // BOM for Excel
-                writer.println("ID;Ім'я;Прізвище;Телефон;Email");
-                for (com.mysuperproject.atelier.entity.Client c : clientList) {
-                    writer.printf("%d;%s;%s;%s;%s%n", 
-                        c.getId(), c.getFirstName(), c.getLastName(), c.getPhoneNumber(), c.getEmail());
+        java.util.List<String> choices = java.util.Arrays.asList("Клієнти", "Співробітники", "Матеріали", "Послуги", "Замовлення");
+        javafx.scene.control.ChoiceDialog<String> dialog = new javafx.scene.control.ChoiceDialog<>("Клієнти", choices);
+        dialog.setTitle("Експорт в Excel");
+        dialog.setHeaderText("Виберіть, які дані ви хочете експортувати:");
+        dialog.setContentText("Таблиця:");
+
+        java.util.Optional<String> result = dialog.showAndWait();
+        result.ifPresent(choice -> {
+            try {
+                String fileName = "atelier_export.csv";
+                java.io.File file = new java.io.File(System.getProperty("user.home") + "/Desktop/" + fileName);
+                try (java.io.PrintWriter writer = new java.io.PrintWriter(file, java.nio.charset.StandardCharsets.UTF_8)) {
+                    writer.write('\ufeff'); // BOM for Excel
+
+                    if (choice.equals("Клієнти")) {
+                        writer.println("ID;Ім'я;Прізвище;Телефон;Email");
+                        for (com.mysuperproject.atelier.entity.Client c : clientList) {
+                            writer.printf("%d;%s;%s;\t%s;%s%n", c.getId(), c.getFirstName(), c.getLastName(), c.getPhoneNumber(), c.getEmail() != null ? c.getEmail() : "");
+                        }
+                    } else if (choice.equals("Співробітники")) {
+                        writer.println("ID;Ім'я;Прізвище;Посада;Телефон");
+                        for (com.mysuperproject.atelier.entity.Employee e : empList) {
+                            writer.printf("%d;%s;%s;%s;\t%s%n", e.getId(), e.getFirstName(), e.getLastName(), e.getPosition(), e.getPhoneNumber());
+                        }
+                    } else if (choice.equals("Матеріали")) {
+                        writer.println("ID;Назва матеріалу;Одиниця виміру;Ціна за одиницю");
+                        for (com.mysuperproject.atelier.entity.Material m : matList) {
+                            writer.printf("%d;%s;%s;%s%n", m.getId(), m.getMaterialName(), m.getUnit(), m.getPricePerUnit().toString());
+                        }
+                    } else if (choice.equals("Послуги")) {
+                        writer.println("ID;Назва послуги;Опис;Базова ціна");
+                        for (com.mysuperproject.atelier.entity.Service s : srvList) {
+                            writer.printf("%d;%s;%s;%s%n", s.getId(), s.getServiceName(), s.getDescription(), s.getBasePrice().toString());
+                        }
+                    } else if (choice.equals("Замовлення")) {
+                        writer.println("ID;ID Клієнта;ID Співробітника;Дата;Статус;Загальна ціна");
+                        for (com.mysuperproject.atelier.entity.Order o : ordList) {
+                            writer.printf("%d;%d;%d;%s;%s;%s%n", o.getId(), o.getClientId(), o.getEmployeeId(), o.getOrderDate().toString(), o.getStatus(), o.getTotalPrice() != null ? o.getTotalPrice().toString() : "0");
+                        }
+                    }
                 }
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                alert.setTitle("Експорт успішний");
+                alert.setHeaderText(null);
+                alert.setContentText("Дані (" + choice + ") успішно експортовано на Робочий стіл у файл " + fileName);
+                alert.showAndWait();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-            alert.setTitle("Експорт успішний");
-            alert.setHeaderText(null);
-            alert.setContentText("Дані успішно експортовано на Робочий стіл у файл atelier_clients_export.csv (відкривається в Excel).");
-            alert.showAndWait();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     @FXML
