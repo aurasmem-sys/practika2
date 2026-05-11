@@ -55,6 +55,7 @@ jobs:
             --input jpackage-input/ `
             --main-jar atelier-system-1.0-SNAPSHOT-fat.jar `
             --main-class com.mysuperproject.atelier.Launcher `
+            --icon packaging/icon.ico `
             --dest dist/ `
             --win-dir-chooser `
             --win-menu `
@@ -71,6 +72,7 @@ jobs:
             --input jpackage-input/ \
             --main-jar atelier-system-1.0-SNAPSHOT-fat.jar \
             --main-class com.mysuperproject.atelier.Launcher \
+            --icon packaging/icon.icns \
             --dest dist/
 
       - name: Package installer (Linux)
@@ -84,6 +86,7 @@ jobs:
             --input jpackage-input/ \
             --main-jar atelier-system-1.0-SNAPSHOT-fat.jar \
             --main-class com.mysuperproject.atelier.Launcher \
+            --icon src/main/resources/images/icon.png \
             --dest dist/ \
             --linux-shortcut
 
