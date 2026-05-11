@@ -1,52 +1,73 @@
 package com.mysuperproject.atelier;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Scanner;
 
 public class InitDb {
+    
+    // Метод для ручного скидання (використовувався раніше)
     public static void main(String[] args) {
+        try {
+            java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get("atelier.db"));
+            initializeGracefully();
+            System.out.println("База даних успішно перестворена вручну!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Безпечний метод: перевіряє, чи є таблиці, і якщо немає — створює
+    public static void initializeGracefully() {
         String dbFile = "atelier.db";
         String url = "jdbc:sqlite:" + dbFile;
-        try {
-            // Видаляємо стару базу даних, щоб ініціалізувати наново
-            Files.deleteIfExists(Paths.get(dbFile));
-        } catch (Exception e) {
-            System.err.println("Could not delete old database file: " + e.getMessage());
-        }
-
+        
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             
-            System.out.println("Starting database initialization...");
-
-            // Читаємо і виконуємо DDL
-            String ddl = new String(Files.readAllBytes(Paths.get("db/DDL.sql")));
-            String[] ddlStatements = ddl.split(";");
-            for (String sql : ddlStatements) {
-                String cleanSql = sql.replaceAll("--.*", "").replaceAll("(?s)/\\*.*?\\*/", "").trim();
-                if (!cleanSql.isEmpty()) {
-                    stmt.execute(sql);
-                }
-            }
-            System.out.println("DDL executed successfully (tables created).");
+            // Перевіряємо чи є таблиця clients
+            ResultSet rs = stmt.executeQuery("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='clients'");
+            rs.next();
+            int count = rs.getInt(1);
             
-            // Читаємо і виконуємо DML
-            String dml = new String(Files.readAllBytes(Paths.get("db/DML.sql")));
-            String[] dmlStatements = dml.split(";");
-            for (String sql : dmlStatements) {
-                String cleanSql = sql.replaceAll("--.*", "").replaceAll("(?s)/\\*.*?\\*/", "").trim();
-                if (!cleanSql.isEmpty()) {
-                    stmt.execute(sql);
-                }
+            if (count == 0) {
+                System.out.println("Базу даних не знайдено або вона порожня. Починаю ініціалізацію...");
+                
+                // Читаємо і виконуємо DDL
+                executeSqlFile(stmt, "/db/DDL.sql");
+                System.out.println("DDL виконано успішно (таблиці створено).");
+                
+                // Читаємо і виконуємо DML
+                executeSqlFile(stmt, "/db/DML.sql");
+                System.out.println("DML виконано успішно (базові дані додано).");
+            } else {
+                System.out.println("База даних вже існує та готова до роботи.");
             }
-            System.out.println("DML executed successfully (data inserted).");
-            System.out.println("SQLite database is fully ready!");
-
         } catch (Exception e) {
+            System.err.println("Помилка ініціалізації бази даних: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    private static void executeSqlFile(Statement stmt, String resourcePath) throws Exception {
+        InputStream is = InitDb.class.getResourceAsStream(resourcePath);
+        if (is == null) {
+            throw new RuntimeException("Не знайдено файл SQL: " + resourcePath);
+        }
+        
+        Scanner scanner = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
+        String sqlContent = scanner.hasNext() ? scanner.next() : "";
+        
+        String[] statements = sqlContent.split(";");
+        for (String sql : statements) {
+            String cleanSql = sql.replaceAll("--.*", "").replaceAll("(?s)/\\*.*?\\*/", "").trim();
+            if (!cleanSql.isEmpty()) {
+                stmt.execute(cleanSql);
+            }
         }
     }
 }

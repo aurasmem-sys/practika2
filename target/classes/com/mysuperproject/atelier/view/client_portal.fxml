@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: -color-bg-default;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mysuperproject.atelier.view.ClientPortalController">
+    <padding>
+        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+    </padding>
+
+    <!-- Header / Theme Toggle -->
+    <HBox alignment="CENTER_RIGHT" spacing="15.0">
+        <children>
+            <Label fx:id="welcomeLabel" style="-fx-font-weight: bold; -fx-font-size: 20px; -fx-text-fill: -color-accent-fg;" text="Ваш особистий кабінет" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#onToggleTheme" styleClass="button-outlined" text="Змінити тему" />
+            <Button mnemonicParsing="false" onAction="#onLogout" styleClass="danger" text="Вийти" />
+        </children>
+    </HBox>
+
+    <Label style="-fx-text-fill: -color-fg-muted;" text="Ласкаво просимо! Тут ви знайдете інформацію про свої замовлення та наші контакти." textAlignment="CENTER" wrapText="true">
+        <font>
+            <Font size="14.0" />
+        </font>
+    </Label>
+
+    <HBox spacing="20.0" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+        <!-- Left panel: Contact Info -->
+        <VBox spacing="15.0" style="-fx-background-color: -color-bg-inset; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" prefWidth="350.0">
+            <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: -color-fg-default;" text="Зв'язатися з нами" />
+            
+            <VBox spacing="5.0">
+                <Label style="-fx-text-fill: -color-fg-muted;" text="Телефон:" />
+                <Label style="-fx-font-weight: bold; -fx-text-fill: -color-accent-fg;" text="+421 950 635 747" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label style="-fx-text-fill: -color-fg-muted;" text="Email:" />
+                <Label style="-fx-font-weight: bold; -fx-text-fill: -color-accent-fg;" text="slavaborsak67@gmail.com" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label style="-fx-text-fill: -color-fg-muted;" text="Адреса:" />
+                <Label style="-fx-font-weight: bold; -fx-text-fill: -color-fg-default;" text="Obchodná 42, 811 06 Bratislava" />
+                <Label style="-fx-text-fill: -color-fg-muted;" text="Словаччина" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label style="-fx-text-fill: -color-fg-muted;" text="Графік роботи:" />
+                <Label style="-fx-text-fill: -color-fg-default;" text="Пн-Пт: 09:00 - 18:00" />
+                <Label style="-fx-text-fill: -color-fg-default;" text="Сб: 10:00 - 15:00" />
+                <Label style="-fx-text-fill: -color-danger-fg;" text="Нд: Вихідний" />
+            </VBox>
+        </VBox>
+
+        <!-- Right panel: Active Orders -->
+        <VBox spacing="15.0" style="-fx-background-color: -color-bg-inset; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" HBox.hgrow="ALWAYS">
+            <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: -color-fg-default;" text="Ваші активні замовлення" />
+            
+            <javafx.scene.control.ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                <content>
+                    <VBox fx:id="ordersContainer" spacing="15.0">
+                        <!-- Сюди будуть завантажуватись замовлення -->
+                    </VBox>
+                </content>
+            </javafx.scene.control.ScrollPane>
+            
+            <Region VBox.vgrow="ALWAYS" />
+        </VBox>
+    </HBox>
+</VBox>

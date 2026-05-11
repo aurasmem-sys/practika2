@@ -1,83 +1,194 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mysuperproject.atelier.view.ClientsController">
+<VBox prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: -color-bg-default;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mysuperproject.atelier.view.MainController">
    <children>
-      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: -color-bg-inset; -fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;">
+         <children>
+            <Label style="-fx-text-fill: -color-accent-fg;" text="Atelier Management System">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#onReset2FA" styleClass="warning" text="Переприв'язати 2FA" />
+            <Button mnemonicParsing="false" onAction="#onToggleTheme" styleClass="button-outlined" text="Змінити тему" />
+            <Button mnemonicParsing="false" onAction="#onLogout" styleClass="danger" text="Вийти" />
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+         </padding>
+      </HBox>
+      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="classic">
         <tabs>
-          <Tab text="Клієнти (CRUD + Пошук)">
+          
+          <!-- КЛІЄНТИ -->
+          <Tab text="Клієнти">
                <content>
-                  <VBox spacing="10.0">
+                  <VBox spacing="10.0" style="-fx-background-color: -color-bg-default;">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label text="Пошук клієнта:" />
-                              <TextField fx:id="searchField" promptText="Введіть ім'я, прізвище, email..." HBox.hgrow="ALWAYS" />
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
+                            <children>
+                                <Label style="-fx-text-fill: -color-fg-default; -fx-font-weight: bold;" text="Пошук клієнта:" />
+                                <TextField fx:id="clientSearchField" prefWidth="300.0" promptText="Введіть ім'я або прізвище..." />
+                            </children>
                         </HBox>
-                        <TableView fx:id="clientsTable" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="clientsTable" VBox.vgrow="ALWAYS" styleClass="striped">
                           <columns>
-                            <TableColumn fx:id="idCol" prefWidth="50.0" text="ID" />
-                            <TableColumn fx:id="firstNameCol" prefWidth="150.0" text="Ім'я" />
-                              <TableColumn fx:id="lastNameCol" prefWidth="150.0" text="Прізвище" />
-                              <TableColumn fx:id="phoneCol" prefWidth="150.0" text="Телефон" />
-                              <TableColumn fx:id="emailCol" prefWidth="200.0" text="Email" />
+                            <TableColumn fx:id="clientIdCol" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="clientFirstNameCol" prefWidth="150.0" text="Ім'я" />
+                            <TableColumn fx:id="clientLastNameCol" prefWidth="150.0" text="Прізвище" />
+                            <TableColumn fx:id="clientPhoneCol" prefWidth="150.0" text="Телефон" />
+                            <TableColumn fx:id="clientEmailCol" prefWidth="200.0" text="Email" />
                           </columns>
                         </TableView>
-                        <HBox spacing="10.0">
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
                            <children>
-                              <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <TextField fx:id="firstNameField" promptText="Ім'я" />
-                                    <TextField fx:id="lastNameField" promptText="Прізвище" />
-                                 </children>
-                              </VBox>
-                              <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <TextField fx:id="phoneField" promptText="Телефон" />
-                                    <TextField fx:id="emailField" promptText="Email" />
-                                 </children>
-                              </VBox>
-                              <VBox alignment="TOP_CENTER" spacing="5.0">
-                                 <children>
-                                    <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAdd" prefWidth="100.0" text="Додати" />
-                                    <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onUpdate" prefWidth="100.0" text="Оновити" />
-                                    <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" prefWidth="100.0" text="Видалити" style="-fx-text-fill: red;" />
-                                 </children>
-                              </VBox>
+                               <TextField fx:id="clientFirstNameField" promptText="Ім'я" />
+                               <TextField fx:id="clientLastNameField" promptText="Прізвище" />
+                               <TextField fx:id="clientPhoneField" promptText="Телефон" />
+                               <TextField fx:id="clientEmailField" promptText="Email" />
+                               <Region HBox.hgrow="ALWAYS" />
+                               <Button mnemonicParsing="false" onAction="#onClientAdd" styleClass="success" text="Додати" />
+                               <Button mnemonicParsing="false" onAction="#onClientUpdate" styleClass="accent" text="Оновити" />
+                               <Button mnemonicParsing="false" onAction="#onClientDelete" styleClass="danger" text="Видалити" />
                            </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
                         </HBox>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
+                     <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
                   </VBox>
                </content>
           </Tab>
-          <Tab text="Замовлення (Демо)">
-            <content>
-              <VBox alignment="CENTER" spacing="10.0">
-                  <Label text="Тут має бути інтерфейс замовлень." />
-                  <Label text="Він будується аналогічно до вкладки Клієнти (за патерном MVVM)." />
-              </VBox>
-            </content>
+
+          <!-- ПРАЦІВНИКИ -->
+          <Tab text="Працівники">
+               <content>
+                  <VBox spacing="10.0" style="-fx-background-color: -color-bg-default;">
+                     <children>
+                        <TableView fx:id="employeesTable" VBox.vgrow="ALWAYS" styleClass="striped">
+                          <columns>
+                            <TableColumn fx:id="empIdCol" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="empFirstNameCol" prefWidth="150.0" text="Ім'я" />
+                            <TableColumn fx:id="empLastNameCol" prefWidth="150.0" text="Прізвище" />
+                            <TableColumn fx:id="empPositionCol" prefWidth="150.0" text="Посада" />
+                            <TableColumn fx:id="empPhoneCol" prefWidth="150.0" text="Телефон" />
+                          </columns>
+                        </TableView>
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                           <children>
+                               <TextField fx:id="empFirstNameField" promptText="Ім'я" />
+                               <TextField fx:id="empLastNameField" promptText="Прізвище" />
+                               <TextField fx:id="empPositionField" promptText="Посада" />
+                               <TextField fx:id="empPhoneField" promptText="Телефон" />
+                               <Region HBox.hgrow="ALWAYS" />
+                               <Button mnemonicParsing="false" onAction="#onEmpAdd" styleClass="success" text="Додати" />
+                               <Button mnemonicParsing="false" onAction="#onEmpUpdate" styleClass="accent" text="Оновити" />
+                               <Button mnemonicParsing="false" onAction="#onEmpDelete" styleClass="danger" text="Видалити" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                  </VBox>
+               </content>
           </Tab>
+
+          <!-- МАТЕРІАЛИ -->
+          <Tab text="Матеріали">
+               <content>
+                  <VBox spacing="10.0" style="-fx-background-color: -color-bg-default;">
+                     <children>
+                        <TableView fx:id="materialsTable" VBox.vgrow="ALWAYS" styleClass="striped">
+                          <columns>
+                            <TableColumn fx:id="matIdCol" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="matNameCol" prefWidth="250.0" text="Назва" />
+                            <TableColumn fx:id="matUnitCol" prefWidth="100.0" text="Одиниця" />
+                            <TableColumn fx:id="matPriceCol" prefWidth="150.0" text="Ціна" />
+                          </columns>
+                        </TableView>
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                           <children>
+                               <TextField fx:id="matNameField" promptText="Назва матеріалу" />
+                               <TextField fx:id="matUnitField" promptText="Одиниця виміру (м, шт...)" />
+                               <TextField fx:id="matPriceField" promptText="Ціна за одиницю" />
+                               <Region HBox.hgrow="ALWAYS" />
+                               <Button mnemonicParsing="false" onAction="#onMatAdd" styleClass="success" text="Додати" />
+                               <Button mnemonicParsing="false" onAction="#onMatUpdate" styleClass="accent" text="Оновити" />
+                               <Button mnemonicParsing="false" onAction="#onMatDelete" styleClass="danger" text="Видалити" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                  </VBox>
+               </content>
+          </Tab>
+
+          <!-- ПОСЛУГИ -->
+          <Tab text="Послуги">
+               <content>
+                  <VBox spacing="10.0" style="-fx-background-color: -color-bg-default;">
+                     <children>
+                        <TableView fx:id="servicesTable" VBox.vgrow="ALWAYS" styleClass="striped">
+                          <columns>
+                            <TableColumn fx:id="srvIdCol" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="srvNameCol" prefWidth="200.0" text="Назва послуги" />
+                            <TableColumn fx:id="srvDescCol" prefWidth="300.0" text="Опис" />
+                            <TableColumn fx:id="srvPriceCol" prefWidth="150.0" text="Базова ціна" />
+                          </columns>
+                        </TableView>
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                           <children>
+                               <TextField fx:id="srvNameField" promptText="Назва" />
+                               <TextField fx:id="srvDescField" promptText="Опис" />
+                               <TextField fx:id="srvPriceField" promptText="Ціна" />
+                               <Region HBox.hgrow="ALWAYS" />
+                               <Button mnemonicParsing="false" onAction="#onSrvAdd" styleClass="success" text="Додати" />
+                               <Button mnemonicParsing="false" onAction="#onSrvUpdate" styleClass="accent" text="Оновити" />
+                               <Button mnemonicParsing="false" onAction="#onSrvDelete" styleClass="danger" text="Видалити" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                  </VBox>
+               </content>
+          </Tab>
+
+          <!-- ЗАМОВЛЕННЯ -->
+          <Tab text="Замовлення">
+               <content>
+                  <VBox spacing="10.0" style="-fx-background-color: -color-bg-default;">
+                     <children>
+                        <TableView fx:id="ordersTable" VBox.vgrow="ALWAYS" styleClass="striped">
+                          <columns>
+                            <TableColumn fx:id="ordIdCol" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="ordClientCol" prefWidth="100.0" text="ID Клієнта" />
+                            <TableColumn fx:id="ordEmpCol" prefWidth="100.0" text="ID Працівника" />
+                            <TableColumn fx:id="ordDateCol" prefWidth="150.0" text="Дата" />
+                            <TableColumn fx:id="ordStatusCol" prefWidth="150.0" text="Статус" />
+                            <TableColumn fx:id="ordTotalCol" prefWidth="150.0" text="Загальна сума" />
+                          </columns>
+                        </TableView>
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                           <children>
+                               <TextField fx:id="ordClientField" promptText="ID Клієнта" />
+                               <TextField fx:id="ordEmpField" promptText="ID Працівника" />
+                               <TextField fx:id="ordStatusField" promptText="Статус" />
+                               <TextField fx:id="ordTotalField" promptText="Загальна сума" />
+                               <Region HBox.hgrow="ALWAYS" />
+                               <Button mnemonicParsing="false" onAction="#onOrdAdd" styleClass="success" text="Додати" />
+                               <Button mnemonicParsing="false" onAction="#onOrdUpdate" styleClass="accent" text="Оновити" />
+                               <Button mnemonicParsing="false" onAction="#onOrdDelete" styleClass="danger" text="Видалити" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                  </VBox>
+               </content>
+          </Tab>
+
         </tabs>
       </TabPane>
    </children>

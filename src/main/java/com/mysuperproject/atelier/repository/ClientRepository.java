@@ -15,16 +15,15 @@ public class ClientRepository implements Dao<Integer, Client> {
 
     private static final String DELETE_SQL = "DELETE FROM clients WHERE id = ?";
     private static final String SAVE_SQL =
-            "INSERT INTO clients (first_name, last_name, phone_number, email, password) VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO clients (first_name, last_name, phone_number, email, password, role) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_SQL =
-            "UPDATE clients SET first_name = ?, last_name = ?, phone_number = ?, email = ?, password = ? WHERE id"
-                    + " = ?";
+            "UPDATE clients SET first_name = ?, last_name = ?, phone_number = ?, email = ?, password = ?, role = ? WHERE id = ?";
     private static final String FIND_BY_ID_SQL =
-            "SELECT id, first_name, last_name, phone_number, email, password FROM clients WHERE id = ?";
+            "SELECT id, first_name, last_name, phone_number, email, password, role FROM clients WHERE id = ?";
     private static final String FIND_ALL_SQL =
-            "SELECT id, first_name, last_name, phone_number, email, password FROM clients";
+            "SELECT id, first_name, last_name, phone_number, email, password, role FROM clients";
     private static final String FIND_BY_EMAIL_SQL =
-            "SELECT id, first_name, last_name, phone_number, email, password FROM clients WHERE email = ?";
+            "SELECT id, first_name, last_name, phone_number, email, password, role FROM clients WHERE email = ?";
 
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
@@ -49,6 +48,7 @@ public class ClientRepository implements Dao<Integer, Client> {
             preparedStatement.setString(3, entity.getPhoneNumber());
             preparedStatement.setString(4, entity.getEmail());
             preparedStatement.setString(5, entity.getPassword());
+            preparedStatement.setString(6, entity.getRole());
 
             preparedStatement.executeUpdate();
 
@@ -58,6 +58,15 @@ public class ClientRepository implements Dao<Integer, Client> {
             }
             return entity;
         } catch (SQLException e) {
+            String msg = e.getMessage();
+            if (msg != null) {
+                if (msg.contains("clients.email")) {
+                    throw new IllegalArgumentException("Користувач з таким email вже існує!");
+                }
+                if (msg.contains("clients.phone_number")) {
+                    throw new IllegalArgumentException("Користувач з таким номером телефону вже існує!");
+                }
+            }
             throw new RuntimeException("Error saving client", e);
         }
     }
@@ -71,10 +80,20 @@ public class ClientRepository implements Dao<Integer, Client> {
             preparedStatement.setString(3, entity.getPhoneNumber());
             preparedStatement.setString(4, entity.getEmail());
             preparedStatement.setString(5, entity.getPassword());
-            preparedStatement.setInt(6, entity.getId());
+            preparedStatement.setString(6, entity.getRole());
+            preparedStatement.setInt(7, entity.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            String msg = e.getMessage();
+            if (msg != null) {
+                if (msg.contains("clients.email")) {
+                    throw new IllegalArgumentException("Користувач з таким email вже існує!");
+                }
+                if (msg.contains("clients.phone_number")) {
+                    throw new IllegalArgumentException("Користувач з таким номером телефону вже існує!");
+                }
+            }
             throw new RuntimeException("Error updating client", e);
         }
     }
@@ -131,6 +150,7 @@ public class ClientRepository implements Dao<Integer, Client> {
                 .phoneNumber(resultSet.getString("phone_number"))
                 .email(resultSet.getString("email"))
                 .password(resultSet.getString("password"))
+                .role(resultSet.getString("role"))
                 .build();
     }
 }

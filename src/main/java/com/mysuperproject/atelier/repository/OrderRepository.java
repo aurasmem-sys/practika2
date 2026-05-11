@@ -113,12 +113,24 @@ public class OrderRepository implements Dao<Integer, Order> {
     }
 
     private Order buildOrder(ResultSet resultSet) throws SQLException {
-        Date sqlDate = resultSet.getDate("order_date");
+        String dateStr = resultSet.getString("order_date");
+        java.time.LocalDate orderDate = null;
+        if (dateStr != null && !dateStr.isEmpty()) {
+            try {
+                if (dateStr.contains(" ")) {
+                    dateStr = dateStr.substring(0, dateStr.indexOf(" "));
+                }
+                orderDate = java.time.LocalDate.parse(dateStr);
+            } catch (Exception e) {
+                // Ignore parsing errors
+            }
+        }
+        
         return Order.builder()
                 .id(resultSet.getInt("id"))
                 .clientId(resultSet.getInt("client_id"))
                 .employeeId(resultSet.getInt("employee_id"))
-                .orderDate(sqlDate != null ? sqlDate.toLocalDate() : null)
+                .orderDate(orderDate)
                 .status(resultSet.getString("status"))
                 .totalPrice(resultSet.getBigDecimal("total_price"))
                 .build();

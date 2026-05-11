@@ -11,18 +11,21 @@ public class AtelierApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Set AtlantaFX theme
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+        // Підтягуємо збережену тему (світлу або темну), щоб не скидалась при перезапуску
+        com.mysuperproject.atelier.view.SceneManager.applySavedTheme();
         
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/mysuperproject/atelier/view/main_view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        // Зберігаємо головне вікно, щоб потім в ньому міняти сцени (екрани)
+        com.mysuperproject.atelier.view.SceneManager.setPrimaryStage(primaryStage);
         
-        primaryStage.setTitle("Atelier Management System");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // ПЕРЕВІРКА БАЗИ ДАНИХ (створить, якщо користувач її видалив)
+        com.mysuperproject.atelier.InitDb.initializeGracefully();
+        
+        // Першим ділом запускаємо вікно логіну
+        com.mysuperproject.atelier.view.SceneManager.switchScene("/com/mysuperproject/atelier/view/login_view.fxml", "Вхід в систему", 400, 600);
     }
 
     public static void main(String[] args) {
+        // Стандартний запуск JavaFX програми
         launch(args);
     }
 }
