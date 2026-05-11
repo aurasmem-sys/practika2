@@ -62,12 +62,9 @@ public class InitDb {
         Scanner scanner = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
         String sqlContent = scanner.hasNext() ? scanner.next() : "";
         
-        String[] statements = sqlContent.split(";");
-        for (String sql : statements) {
-            String cleanSql = sql.replaceAll("--.*", "").replaceAll("(?s)/\\*.*?\\*/", "").trim();
-            if (!cleanSql.isEmpty()) {
-                stmt.execute(cleanSql);
-            }
+        // Виконуємо весь файл цілком, щоб не зламати тригери (CREATE TRIGGER містить крапки з комою всередині BEGIN...END)
+        if (!sqlContent.trim().isEmpty()) {
+            stmt.executeUpdate(sqlContent);
         }
     }
 }

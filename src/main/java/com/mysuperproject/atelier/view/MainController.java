@@ -294,6 +294,28 @@ public class MainController {
     private void clearOrdFields() { ordClientField.clear(); ordEmpField.clear(); ordStatusField.clear(); ordTotalField.clear(); }
 
     @FXML
+    public void onExportData() {
+        try {
+            java.io.File file = new java.io.File(System.getProperty("user.home") + "/Desktop/atelier_clients_export.csv");
+            try (java.io.PrintWriter writer = new java.io.PrintWriter(file, java.nio.charset.StandardCharsets.UTF_8)) {
+                writer.write('\ufeff'); // BOM for Excel
+                writer.println("ID;Ім'я;Прізвище;Телефон;Email");
+                for (com.mysuperproject.atelier.entity.Client c : clientList) {
+                    writer.printf("%d;%s;%s;%s;%s%n", 
+                        c.getId(), c.getFirstName(), c.getLastName(), c.getPhoneNumber(), c.getEmail());
+                }
+            }
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+            alert.setTitle("Експорт успішний");
+            alert.setHeaderText(null);
+            alert.setContentText("Дані успішно експортовано на Робочий стіл у файл atelier_clients_export.csv (відкривається в Excel).");
+            alert.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     public void onLogout() {
         SceneManager.switchScene("/com/mysuperproject/atelier/view/login_view.fxml", "Вхід в систему", 400, 600);
     }

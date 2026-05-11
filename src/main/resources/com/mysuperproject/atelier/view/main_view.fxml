@@ -17,6 +17,7 @@
             <Region HBox.hgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#onReset2FA" styleClass="warning" text="Переприв'язати 2FA" />
             <Button mnemonicParsing="false" onAction="#onToggleTheme" styleClass="button-outlined" text="Змінити тему" />
+            <Button mnemonicParsing="false" onAction="#onExportData" styleClass="accent" text="Експорт в Excel" />
             <Button mnemonicParsing="false" onAction="#onLogout" styleClass="danger" text="Вийти" />
          </children>
          <padding>
