@@ -1,0 +1,128 @@
+name: Release — Build Installers
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-installers:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Install WiX Toolset (Windows only)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install wixtoolset --yes
+
+      - name: Build Fat JAR
+        run: mvn clean package -DskipTests
+
+      - name: Prepare jpackage input
+        shell: bash
+        run: |
+          mkdir -p jpackage-input
+          cp target/atelier-system-1.0-SNAPSHOT-fat.jar jpackage-input/
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Package installer (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          jpackage `
+            --type msi `
+            --name "Atelier System" `
+            --app-version "${{ steps.version.outputs.VERSION }}" `
+            --vendor "Slava" `
+            --input jpackage-input/ `
+            --main-jar atelier-system-1.0-SNAPSHOT-fat.jar `
+            --main-class com.mysuperproject.atelier.Launcher `
+            --dest dist/ `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut
+
+      - name: Package installer (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          jpackage \
+            --type dmg \
+            --name "Atelier System" \
+            --app-version "${{ steps.version.outputs.VERSION }}" \
+            --vendor "Slava" \
+            --input jpackage-input/ \
+            --main-jar atelier-system-1.0-SNAPSHOT-fat.jar \
+            --main-class com.mysuperproject.atelier.Launcher \
+            --dest dist/
+
+      - name: Package installer (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          jpackage \
+            --type deb \
+            --name "atelier-system" \
+            --app-version "${{ steps.version.outputs.VERSION }}" \
+            --vendor "Slava" \
+            --input jpackage-input/ \
+            --main-jar atelier-system-1.0-SNAPSHOT-fat.jar \
+            --main-class com.mysuperproject.atelier.Launcher \
+            --dest dist/ \
+            --linux-shortcut
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          path: dist/
+          retention-days: 1
+
+  publish-release:
+    needs: build-installers
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all installer artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: installers/
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Atelier System Release ${{ github.ref_name }}"
+          body: |
+            ## Зміни у версії ${{ github.ref_name }}
+
+            Фінальна версія системи для управління ательє.
+
+            ## Завантаження інсталяторів:
+
+            | Операційна система | Файл інсталятора |
+            |---|---|
+            | Windows 10/11 | `*.msi` |
+            | macOS 12+ | `*.dmg` |
+            | Ubuntu/Debian | `*.deb` |
+          files: installers/**
+          draft: false
+          prerelease: false
